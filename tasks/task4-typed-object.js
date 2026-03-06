@@ -7,26 +7,21 @@
 */
 
 function typedObject(schema) {
-  const data = new Object();
-
   var handler = {
-    set: function (target, key, value) {
+    set(target, key, value) {
       if (!(key in schema)) {
         throw new Error(`Unexpected key: ${key}`);
       }
 
       if (typeof value !== schema[key]) {
         throw new Error(`expected: '${schema[key]}' but got '${typeof value}'`);
-      } else {
-        target[key] = value;
-        return true;
       }
+
+      return Reflect.set(target, key, value);
     },
   };
 
-  const proxy = new Proxy(data, handler);
-
-  return proxy;
+  return new Proxy({}, handler);
 }
 
 const user = typedObject({

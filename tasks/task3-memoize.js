@@ -7,17 +7,17 @@
 */
 
 function memoize(fn) {
-  const dict = new Map();
+  const cache = new Map();
 
   return function (...args) {
     const key = JSON.stringify(args);
 
-    if (dict.has(key)) {
-      return dict.get(key);
+    if (cache.has(key)) {
+      return cache.get(key);
     }
 
-    const result = fn(...args);
-    dict.set(key, result);
+    const result = Reflect.apply(fn, this, args);
+    cache.set(key, result);
 
     return result;
   };
@@ -27,6 +27,17 @@ const slowAdd = (a, b) => {
   return a + b;
 };
 
+const obj = {
+  value: 10,
+  add(a) {
+    return this.value + a;
+  },
+};
+
 const memoAdd = memoize(slowAdd);
 memoAdd(1, 2); // возвращает 3
 memoAdd(1, 2); // из кэша, возвращает 3
+obj.memoAdd = memoize(obj.add);
+
+console.log(obj.memoAdd(5));
+console.log(obj.memoAdd(5));
