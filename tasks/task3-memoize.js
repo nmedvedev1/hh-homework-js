@@ -7,7 +7,20 @@
 */
 
 function memoize(fn) {
-  // TODO: реализуйте
+  const dict = new Map();
+
+  return function (...args) {
+    const key = JSON.stringify(args);
+
+    if (dict.has(key)) {
+      return dict.get(key);
+    }
+
+    const result = fn(...args);
+    dict.set(key, result);
+
+    return result;
+  };
 }
 
 const slowAdd = (a, b) => {

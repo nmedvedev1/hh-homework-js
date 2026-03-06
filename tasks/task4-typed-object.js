@@ -7,7 +7,26 @@
 */
 
 function typedObject(schema) {
-  // TODO: реализуйте
+  const data = new Object();
+
+  var handler = {
+    set: function (target, key, value) {
+      if (!(key in schema)) {
+        throw new Error(`Unexpected key: ${key}`);
+      }
+
+      if (typeof value !== schema[key]) {
+        throw new Error(`expected: '${schema[key]}' but got '${typeof value}'`);
+      } else {
+        target[key] = value;
+        return true;
+      }
+    },
+  };
+
+  const proxy = new Proxy(data, handler);
+
+  return proxy;
 }
 
 const user = typedObject({
@@ -16,5 +35,5 @@ const user = typedObject({
 });
 
 user.name = "Ivan"; // выполнится
-user.age = 20;      // выполнится
-user.age = "20";    // должно выбросить ошибку
+user.age = 20; // выполнится
+user.age = "20"; // должно выбросить ошибку
