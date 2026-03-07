@@ -9,24 +9,24 @@
 
 function promiseAll(promises) {
     // TODO: реализуйте
-    return new Promise((res, rej) => {
-        if (promises.length === 0) return res([])
+    return new Promise((resolve, reject) => {
+        if (promises.length === 0) return resolve([])
 
-        const result = [...promises]
+        const result = new Array(promises.length)
 
         let count = 0
 
-        result.forEach((item, i) => {
+        promises.forEach((item, i) => {
             Promise.resolve(item)
                 .then((data) => {
                     result[i] = data
                     count++
                     if (count === result.length) {
-                        res(result)
+                        resolve(result)
                     }
                 })
                 .catch((err) => {
-                    rej(err)
+                    reject(err)
                 })
         })
     })

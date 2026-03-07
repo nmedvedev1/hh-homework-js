@@ -8,22 +8,24 @@
 
 function typedObject(schema) {
     // TODO: реализуйте
-    const obj = {}
-    return new Proxy(obj, {
-        get: (target, key, receiver) => {
-            return Reflect.get(target, key, receiver)
-        },
-        set: (target, key, newValue, receiver) => {
-            const typeFromSchema = new Set(schema[key]?.split('|') || [])
-            const checkedType = newValue === null ? 'null' : typeof newValue
+    return new Proxy(
+        {},
+        {
+            set: (target, key, newValue, receiver) => {
+                const typeFromSchema = new Set(schema[key]?.split('|') || [])
+                const checkedType = newValue === null ? 'null' : typeof newValue
 
-            if (typeFromSchema.size > 0 && !typeFromSchema.has(checkedType)) {
-                throw new Error('Not allowed type')
-            }
+                if (
+                    typeFromSchema.size > 0 &&
+                    !typeFromSchema.has(checkedType)
+                ) {
+                    throw new Error('Not allowed type')
+                }
 
-            return Reflect.set(target, key, newValue, receiver)
+                return Reflect.set(target, key, newValue, receiver)
+            },
         },
-    })
+    )
 }
 
 const user = typedObject({

@@ -16,7 +16,7 @@ function memoize(fn) {
             return data.get(key)
         }
 
-        const result = fn(...args)
+        const result = fn.call(this, ...args)
         data.set(key, result)
         return result
     }
@@ -30,3 +30,13 @@ const memoAdd = memoize(slowAdd)
 memoAdd(1, 2) // возвращает 3
 memoAdd(1, 2) // из кэша, возвращает 3
 memoAdd(2, 2) // возвращает 4
+
+const obj = {
+    value: 10,
+    add(a) {
+        return this.value + a
+    },
+}
+
+obj.memoAdd = memoize(obj.add)
+console.log(obj.memoAdd(5)) // 15

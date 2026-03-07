@@ -8,9 +8,9 @@
 
 function delay(ms) {
     // TODO: реализуйте
-    return new Promise((res) => {
+    return new Promise((resolve) => {
         setTimeout(() => {
-            res()
+            resolve()
         }, ms)
     })
 }
