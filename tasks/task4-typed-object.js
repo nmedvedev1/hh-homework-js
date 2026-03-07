@@ -7,7 +7,7 @@
 */
 
 function typedObject(schema) {
-  var handler = {
+  let handler = {
     set(target, key, value) {
       if (!(key in schema)) {
         throw new Error(`Unexpected key: ${key}`);

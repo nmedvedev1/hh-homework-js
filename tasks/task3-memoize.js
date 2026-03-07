@@ -16,7 +16,7 @@ function memoize(fn) {
       return cache.get(key);
     }
 
-    const result = Reflect.apply(fn, this, args);
+    const result = fn.apply(this, args);
     cache.set(key, result);
 
     return result;
