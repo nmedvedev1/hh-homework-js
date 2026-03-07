@@ -8,7 +8,30 @@
 */
 
 function promiseAll(promises) {
-  // TODO: реализуйте
+  return new Promise((resolve, reject) => {
+    const result = [];
+    let count = 0;
+    const total = promises.length;
+
+    if (total === 0) {
+      resolve([]);
+      return;
+    }
+
+    promises.forEach((promise, i) => {
+      Promise.resolve(promise)
+        .then((value) => {
+          result[i] = value;
+          count++;
+          if (count === total) {
+            resolve(result);
+          }
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  });
 }
 
 const p1 = Promise.resolve(1);

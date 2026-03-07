@@ -7,7 +7,21 @@
 */
 
 function typedObject(schema) {
-  // TODO: реализуйте
+  let handler = {
+    set(target, key, value) {
+      if (!(key in schema)) {
+        throw new Error(`Unexpected key: ${key}`);
+      }
+
+      if (typeof value !== schema[key]) {
+        throw new Error(`expected: '${schema[key]}' but got '${typeof value}'`);
+      }
+
+      return Reflect.set(target, key, value);
+    },
+  };
+
+  return new Proxy({}, handler);
 }
 
 const user = typedObject({
@@ -16,5 +30,5 @@ const user = typedObject({
 });
 
 user.name = "Ivan"; // выполнится
-user.age = 20;      // выполнится
-user.age = "20";    // должно выбросить ошибку
+user.age = 20; // выполнится
+user.age = "20"; // должно выбросить ошибку
