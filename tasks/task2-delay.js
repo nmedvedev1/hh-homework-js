@@ -6,7 +6,7 @@
 - Промис резолвится через ms миллисекунд
 */
 
-function delay(ms) {
+export function delay(ms) {
   return new Promise((resolve) =>
     setTimeout(() => {
       resolve();
@@ -14,4 +14,4 @@ function delay(ms) {
   );
 }
 
-delay(500).then(() => console.log("Готово через 500мс"));
+//delay(500).then(() => console.log("Готово через 500мс"));

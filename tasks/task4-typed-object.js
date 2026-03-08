@@ -6,9 +6,11 @@
 - При присваивании проверять тип и бросать ошибку при несоответствии
 */
 
+"use strict"
+
 function typedObject(schema) {
   const handler = {
-    set(target, prop, value) {
+    set(target, prop, value, receiver) {
       const valueType = schema[prop];
       const receivedType = typeof value;
       if (valueType !== receivedType) {
@@ -17,7 +19,7 @@ function typedObject(schema) {
         );
       }
 
-      target[prop] = value;
+      return Reflect.set(target, prop, value, receiver);
     },
   };
   return new Proxy({}, handler);
@@ -30,6 +32,6 @@ const user = typedObject({
 
 user.name = "Ivan"; // выполнится
 user.age = 20; // выполнится
-user.age = "20";    // должно выбросить ошибку
+//user.age = "20";    // должно выбросить ошибку
 
 console.log(user);
