@@ -10,7 +10,7 @@
 function promiseAll(promises) {
   return new Promise((resolve, reject) => {
     const results = [];
-    let done = 0;
+    let doneCount = 0;
 
     if (promises.length === 0) {
       resolve([]);
@@ -21,9 +21,9 @@ function promiseAll(promises) {
       Promise.resolve(promise)
         .then((value) => {
           results[index] = value;
-          done++;
+          doneCount++;
 
-          if (done === promises.length) {
+          if (doneCount === promises.length) {
             resolve(results);
           }
         })

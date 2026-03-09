@@ -25,14 +25,16 @@ function typedObject(schema) {
 
         if (typeof value !== expectedType) {
           throw new TypeError(
-            `Свойство "${key}" должно быть типом ${expectedType}`
+            `Свойство "${key}" должно быть типом ${expectedType}`,
           );
         }
 
         storage[key] = value;
-      }
+      },
     });
   });
+
+  Object.preventExtensions(obj);
 
   return obj;
 }
@@ -43,19 +45,19 @@ function typedObject(schema) {
 
   return new Proxy(target, {
     set(obj, prop, value, receiver) {
+      if (!(prop in schema)) {
+        throw new TypeError(`Свойство "${String(prop)}" не описано в схеме`);
+      }
+
       const expectedType = schema[prop];
 
-      if (expectedType && typeof value !== expectedType) {
+      if (typeof value !== expectedType) {
         throw new TypeError(
           `Свойство "${String(prop)}" должно быть типом ${expectedType}`,
         );
       }
 
       return Reflect.set(obj, prop, value, receiver);
-    },
-
-    get(obj, prop, receiver) {
-      return Reflect.get(obj, prop, receiver);
     },
   });
 }
@@ -68,3 +70,6 @@ const user = typedObject({
 user.name = "Ivan"; // выполнится
 user.age = 20; // выполнится
 user.age = "20"; // должно выбросить ошибку
+user.favAnimal = "unicorn"; //тем более должно выбросить ошибку
+
+console.log(user);
