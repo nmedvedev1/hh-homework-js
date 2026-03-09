@@ -9,14 +9,15 @@
 function memoize(fn) {
   const cache = new Map();
   return function(...args) {
-    const key = fn(...args);
+    const key = args.join(',');
     if (cache.has(key)) {
       console.log('Из кэша');
       return cache.get(key);
     }
     console.log('Вычисляем результат');
-    cache.set(key, fn(...args));
-    return cache.get(key);
+    const result = fn.apply(this, args);
+    cache.set(key, result);
+    return result;
   }
 }
 
@@ -27,3 +28,15 @@ const slowAdd = (a, b) => {
 const memoAdd = memoize(slowAdd);
 memoAdd(1, 2); // возвращает 3
 memoAdd(1, 2); // из кэша, возвращает 3
+
+
+const obj = {
+  value: 10,
+  add(a) {
+    return this.value + a;
+  }
+};
+
+obj.memoAdd = memoize(obj.add);
+console.log(obj.memoAdd(5));
+console.log(obj.memoAdd(5));
