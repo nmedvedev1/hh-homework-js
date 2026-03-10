@@ -7,21 +7,19 @@
 */
 
 // Простая реализация с возможностью добавления новых свойств
-function typedObject(schema: Record<string, string>) {
+function typedObject(schema) {
     // TODO: реализуйте
     return new Proxy(
         {},
         {
             set(target, prop, value) {
-                if(prop in schema && typeof prop === 'string')
-                {
-                    if (typeof value !== schema[prop]) {
-                        throw new Error(`Тип свойства ${prop} должен быть ${schema[prop]}, дан ${typeof value}`);
-                    }
+                if (typeof value !== schema[prop]) {
+                    throw new Error(`Тип свойства ${prop} должен быть ${schema[prop]}, дан ${typeof value}`);
                 }
                 return Reflect.set(target, prop, value);
             },
-        }) as Record<string, unknown>;
+        }
+    );
 }
 
 // Test case #1
@@ -42,24 +40,23 @@ user.favColor = 'red'; // Интересный момент, разберем н
 // В связи с этим, запретим создание новых свойств, чтобы избежать таких ситуаций
 
 // Реализация без возможности установления новых свойств
-function modifiedTypedObject(schema: Record<string, string>) {
+function modifiedTypedObject(schema) {
     // TODO: реализуйте
     return new Proxy(
         {},
         {
             set(target, prop, value) {
-                if(typeof prop === 'string') {
-                    if (!(prop in schema)) {
-                        throw new Error(`Свойство ${prop} не задано в объекте`);
-                    }
+                if (!(prop in schema)) {
+                    throw new Error(`Свойство ${prop} не задано в объекте`);
+                }
 
-                    if (typeof value !== schema[prop]) {
-                        throw new Error(`Тип свойства ${prop} должен быть ${schema[prop]}, дан ${typeof value}`);
-                    }
+                if (typeof value !== schema[prop]) {
+                    throw new Error(`Тип свойства ${prop} должен быть ${schema[prop]}, дан ${typeof value}`);
                 }
                 return Reflect.set(target, prop, value);
             },
-        }) as Record<string, unknown>;
+        }
+    );
 }
 
 // Test case #1

@@ -7,8 +7,12 @@
 */
 
 // Простая реализация с проверкой ms
-function delay(ms: number): Promise<void> {
+function delay(ms) {
     // TODO: реализуйте
+    if (typeof ms !== 'number') {
+        return Promise.reject('Invalid ms type');
+    }
+
     if (ms < 0) {
         return Promise.reject('Invalid ms value');
     }
@@ -29,3 +33,9 @@ delay(-200)
     .then(() => console.log('Готово через -200мс'))
     .catch(() => console.log('Ошибка переданного значения'));
 // Test status: given value error
+
+// Test case #3
+delay('400')
+    .then(() => console.log('Готово через 400мс'))
+    .catch(() => console.log('Ошибка переданного типа'));
+// Test status: given type error
