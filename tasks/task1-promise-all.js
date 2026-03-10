@@ -8,10 +8,38 @@
 */
 
 function promiseAll(promises) {
-  // TODO: реализуйте
+
+    return new Promise((resolve, reject) => {
+        let results = [];
+        let completedPromises = 0; // счётчик выполненных промисов
+
+        if (promises.length === 0) { // проверка, если нет аргументов
+            resolve(results);
+            return;
+        }
+
+        for (let i = 0; i < promises.length; i++) {
+            promises.at(i).then((result) => {
+                results[i] = result; // сохраняем порядок выполнения
+                completedPromises++;
+
+                if (completedPromises === promises.length) {
+                    resolve(results);
+                }
+            }).catch((_error) => {
+                reject(_error);
+            });
+        }
+    });
 }
 
 const p1 = Promise.resolve(1);
 const p2 = Promise.resolve(2);
+const p3 = Promise.reject('error');
+const p4 = Promise.resolve(4);
 
-promiseAll([p1, p2]).then(console.log); // [1, 2]
+promiseAll([p4, p2, p3, p1]).then((res) => {
+    console.log(res);
+}).catch((error) => {
+    console.log(error);
+});
