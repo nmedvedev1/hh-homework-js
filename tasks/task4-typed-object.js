@@ -7,19 +7,19 @@
 */
 
 function typedObject(schema) {
-  return new Proxy( {},
+  return new Proxy({},
     {
-      set(target, prop, value) {
+      set(target, prop, value, receiver) {
         if (!schema[prop]) {
-          throw new TypeError(`Свойство  ${prop} не описано в схеме`);
+          throw new TypeError(`Свойство ${prop} не описано в схеме`);
         }
         if (typeof value !== schema[prop]) {
           throw new TypeError(
             `Ожидается ${schema[prop]} для свойства ${prop}, получено ${typeof value}`,
           );
         }
-        target[prop] = value;
-        return true;
+
+        return Reflect.set(target, prop, value, receiver);
       },
     },
   );
