@@ -7,7 +7,10 @@
 */
 
 function delay(ms) {
-  // TODO: реализуйте
+  return new Promise (function (resolve, reject) {
+    setTimeout(() => resolve(), ms)
+  })
 }
+
 
 delay(500).then(() => console.log("Готово через 500мс"));
