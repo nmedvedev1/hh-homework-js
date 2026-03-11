@@ -8,7 +8,25 @@
 */
 
 function promiseAll(promises) {
-  // TODO: реализуйте
+  const results = [];
+
+  return new Promise((res, rej) => {
+    if (!promises.length) return res([]);
+    let completed = 0;
+    promises.forEach((promise, index) => {
+      promise
+        .then((elem) => {
+          completed++;
+          results[index] = elem;
+          if (completed === promises.length) {
+            res(results);
+          }
+        })
+        .catch((err) => {
+          rej(err);
+        });
+    });
+  });
 }
 
 const p1 = Promise.resolve(1);
