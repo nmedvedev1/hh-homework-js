@@ -17,8 +17,7 @@ function typedObject(schema) {
       if (actualType !== expectedType) {
         throw new Error(`Свойство "${prop}" должно быть типа ${expectedType}, получен ${actualType}`)
       }
-      target[prop] = value;
-      return true
+      return Reflect.set(target, prop, value);
     }
   });
 }
