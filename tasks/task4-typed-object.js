@@ -7,7 +7,22 @@
 */
 
 function typedObject(schema) {
-  // TODO: реализуйте
+  return new Proxy(
+    {},
+    {
+      set(target, prop, value, receiver) {
+        if (!Object.hasOwn(schema, prop)) {
+          throw new Error(`${prop} is not in schema`);
+        }
+
+        if (typeof value !== schema[prop]) {
+          throw new Error("wrong type");
+        }
+
+        return Reflect.set(target, prop, value, receiver);
+      },
+    },
+  );
 }
 
 const user = typedObject({
@@ -16,5 +31,5 @@ const user = typedObject({
 });
 
 user.name = "Ivan"; // выполнится
-user.age = 20;      // выполнится
-user.age = "20";    // должно выбросить ошибку
+user.age = 20; // выполнится
+user.age = "20"; // должно выбросить ошибку
