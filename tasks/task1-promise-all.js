@@ -10,20 +10,20 @@
 function promiseAll(promises) {
   const results = [];
 
-  return new Promise((res, rej) => {
-    if (!promises.length) return res([]);
-    let completed = 0;
+  return new Promise((resolve, reject) => {
+    if (!promises.length) return resolve([]);
+    let completedCount = 0;
     promises.forEach((promise, index) => {
-      promise
+      Promise.resolve(promise)
         .then((elem) => {
-          completed++;
+          completedCount++;
           results[index] = elem;
-          if (completed === promises.length) {
-            res(results);
+          if (completedCount === promises.length) {
+            resolve(results);
           }
         })
         .catch((err) => {
-          rej(err);
+          reject(err);
         });
     });
   });
