@@ -7,14 +7,46 @@
 */
 
 function typedObject(schema) {
-  // TODO: реализуйте
+    const data = {};
+
+    return new Proxy(data, {
+
+        set(target, prop, value) {
+            if (!(prop in schema)) {
+                throw new Error(`invalid property: ${prop}`);
+            }
+
+            const expectedType = schema[prop];
+            const actualType = typeof value;
+
+            if (actualType !== expectedType) {
+                throw new Error(`invalid type of "${prop}". expected: ${expectedType}, got: ${actualType}`);
+            }
+
+            target[prop] = value;
+            return true;
+        },
+
+        get(target, prop) {
+            return target[prop];
+        }
+    });
 }
 
+
 const user = typedObject({
-  name: "string",
-  age: "number",
+    name: "string",
+    age: "number",
 });
 
 user.name = "Ivan"; // выполнится
+console.log(user.name)
+
 user.age = 20;      // выполнится
-user.age = "20";    // должно выбросить ошибку
+console.log(user.age)
+
+try {
+    user.age = "20";    // должно выбросить ошибку
+} catch (e) {
+    console.log(`error while trying to assign string to number:\n ${e}`)
+}
