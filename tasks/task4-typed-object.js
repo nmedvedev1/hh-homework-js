@@ -7,10 +7,7 @@
 */
 
 function typedObject(schema) {
-    const data = {};
-
-    return new Proxy(data, {
-
+    return new Proxy({}, {
         set(target, prop, value) {
             if (!(prop in schema)) {
                 throw new Error(`invalid property: ${prop}`);
@@ -23,12 +20,7 @@ function typedObject(schema) {
                 throw new Error(`invalid type of "${prop}". expected: ${expectedType}, got: ${actualType}`);
             }
 
-            target[prop] = value;
-            return true;
-        },
-
-        get(target, prop) {
-            return target[prop];
+            return Reflect.set(target, prop, value);
         }
     });
 }
