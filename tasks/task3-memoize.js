@@ -18,7 +18,7 @@ function memoize(fn) {
         }
         // console.log("not in cache, executing..")
 
-        const result = fn(...args);
+        const result = fn.apply(this, args);
         cache.set(key, result);
 
         return result;
@@ -32,3 +32,13 @@ const slowAdd = (a, b) => {
 const memoAdd = memoize(slowAdd);
 console.log(memoAdd(1, 2)); // возвращает 3
 console.log(memoAdd(1, 2)); // из кэша, возвращает 3
+
+const obj = {
+    value: 10,
+    add(a) {
+        return this.value + a;
+    }
+};
+
+obj.memoAdd = memoize(obj.add);
+console.log(obj.memoAdd(5));
