@@ -7,13 +7,16 @@
 */
 
 function typedObject(schema) {
-  return function(object){
-    for (const key in schema) {
-      if (typeof object[key] !== schema[key]) {
-        throw new TypeError('Error: Invalid type');
+  return new Proxy({}, {
+    set(target, key, value) {
+      if (key in schema && typeof value !== schema[key]) {
+        throw new TypeError("Error: Invalid type");
       }
+
+      target[key] = value;
+      return true;
     }
-  }
+  });
 }
 
 const user = typedObject({
