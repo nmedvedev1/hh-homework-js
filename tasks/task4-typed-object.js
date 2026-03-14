@@ -7,68 +7,50 @@
 */
 
 function typedObject(schema) {
-  // Создаём объект с внутренним хранилищем данных
-  const data = {};
-  
-  // Создаём прокси для перехвата операций с объектом
-  return new Proxy(data, {
-    // Перехватываем установку свойств
-    set(target, property, value) {
-      // Проверяем, есть ли такое свойство в схеме
+  return new Proxy({}, {
+    set(target, property, value, receiver) {
       if (!schema.hasOwnProperty(property)) {
-        throw new Error(`Свойство "${property}" не разрешено схемой`);
+        throw new Error(`Свойство "${String(property)}" не разрешено схемой`);
       }
       
-      // Получаем ожидаемый тип из схемы
       const expectedType = schema[property];
       
-      // Определяем фактический тип значения
       const actualType = typeof value;
       
-      // Проверяем соответствие типов
       if (actualType !== expectedType) {
         throw new TypeError(
-          `Свойство "${property}" должно быть типа "${expectedType}", ` +
+          `Свойство "${String(property)}" должно быть типа "${expectedType}", ` +
           `получено "${actualType}"`
         );
       }
       
-      // Если проверка пройдена, сохраняем значение
-      target[property] = value;
-      return true; // Успешная установка
+      // использование Reflect
+      return Reflect.set(target, property, value, receiver);
     },
     
-    // Перехватываем получение свойств
-    get(target, property) {
-      // Проверяем, есть ли такое свойство в схеме
-      if (!schema.hasOwnProperty(property)) {
-        throw new Error(`Свойство "${property}" не разрешено схемой`);
-      }
-      
-      // Возвращаем значение или undefined, если свойство ещё не установлено
-      return target[property];
+    // Для всех остальных операций используем поведение по умолчанию
+    get(target, property, receiver) {
+      return Reflect.get(target, property, receiver);
     },
     
-    // Перехватываем проверку наличия свойства
     has(target, property) {
-      return property in schema;
+      return Reflect.has(target, property);
     },
     
-    // Перехватываем получение списка ключей
     ownKeys(target) {
-      return Object.keys(schema);
+      return Reflect.ownKeys(target);
     },
     
-    // Перехватываем получение дескриптора свойства
     getOwnPropertyDescriptor(target, property) {
-      if (property in schema) {
-        return {
-          enumerable: true,
-          configurable: true,
-          writable: true
-        };
-      }
-      return undefined;
+      return Reflect.getOwnPropertyDescriptor(target, property);
+    },
+    
+    deleteProperty(target, property) {
+      return Reflect.deleteProperty(target, property);
+    },
+    
+    defineProperty(target, property, descriptor) {
+      return Reflect.defineProperty(target, property, descriptor);
     }
   });
 }
@@ -110,6 +92,8 @@ try {
 }
 
 console.log('Ключи объекта:', Object.keys(user)); 
+console.log('Есть ли свойство:', 'name' in user); 
+console.log('Проверка прототипных методов:', user.toString !== undefined); 
 
 const product = typedObject({
   id: "number",
