@@ -7,27 +7,29 @@
 - Немедленно реджектится при первой ошибке
 */
 
-function promiseAll(promises) {
-
+function promiseAll(args) {
+    if (!Array.isArray(args)) {
+        return Promise.reject(new TypeError('Args must be in an array'));
+    }
+    const promises = Array.from(args).map(x => Promise.resolve(x));
     return new Promise((resolve, reject) => {
         let results = [];
         let completedPromises = 0; // счётчик выполненных промисов
-
         if (promises.length === 0) { // проверка, если нет аргументов
             resolve(results);
             return;
         }
 
         for (let i = 0; i < promises.length; i++) {
-            promises.at(i).then((result) => {
+            promises[i].then((result) => {
                 results[i] = result; // сохраняем порядок выполнения
                 completedPromises++;
 
                 if (completedPromises === promises.length) {
                     resolve(results);
                 }
-            }).catch((_error) => {
-                reject(_error);
+            }).catch((error) => {
+                reject(error);
             });
         }
     });
@@ -38,7 +40,7 @@ const p2 = Promise.resolve(2);
 const p3 = Promise.reject('error');
 const p4 = Promise.resolve(4);
 
-promiseAll([p4, p2, p3, p1]).then((res) => {
+promiseAll([4,p3,3]).then((res) => {
     console.log(res);
 }).catch((error) => {
     console.log(error);
