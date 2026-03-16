@@ -14,3 +14,12 @@ function typedObject(schema) {
     }
   });
 }
+
+const user = typedObject({
+  name: "string",
+  age: "number",
+});
+
+user.name = "Ivan"; // выполнится
+user.age = 20;      // выполнится
+user.age = "20";    // должно выбросить ошибку
