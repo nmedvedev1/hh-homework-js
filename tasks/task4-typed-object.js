@@ -7,25 +7,23 @@
 */
 
 function typedObject(schema) {
-    const storage = {};
 
-    return new Proxy(storage, {
-        set(target, key, value) {
+    return new Proxy({}, {
+        set(target, key, value, receiver) {
             if (!(key in schema)) {
-                throw new Error(`Отсутствует ключ "${key}"`);
+                throw new TypeError(`Отсутствует ключ "${key}"`);
             }
 
             if (typeof value !== schema[key]) {
-                throw new Error(`Неверный тип данных`);
+                throw new TypeError(`Неверный тип данных`);
             }
-            else {
-                target[key] = value;
-                return true;
-            }
+
+            return Reflect.set(target, key, value, receiver); // добавил reflect
         },
-        get(target, key) {
-            return target[key];
-        }
+        // чтение можем не перехватывать
+        // get(target, key) {
+        //     return target[key];
+        // }
     });
 }
 
@@ -38,8 +36,8 @@ try {
     user.name = "Ivan"; // выполнится
     console.log(user.name); // "Ivan"
 
-    user.name = 20;      // выполнится
-    console.log(user.age); // 20
+    user.name = "20";      // выполнится
+    console.log(user.name); // 20
 
     user.age = "20";    // должно выбросить ошибку
 } catch (error) {
