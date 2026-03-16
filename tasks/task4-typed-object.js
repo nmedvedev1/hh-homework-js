@@ -1,20 +1,16 @@
-/*
-Задание 4: Реализуйте typedObject
-
-Цель:
-- Создать объект на основе схемы ожидаемых типов
-- При присваивании проверять тип и бросать ошибку при несоответствии
-*/
-
 function typedObject(schema) {
-  // TODO: реализуйте
+  const obj = {};
+
+  return new Proxy(obj, {
+    set(target, prop, value) {
+      const expectedType = schema[prop];
+
+      if (expectedType && typeof value !== expectedType) {
+        throw new Error(`Expected ${expectedType} but got ${typeof value}`);
+      }
+
+      target[prop] = value;
+      return true;
+    }
+  });
 }
-
-const user = typedObject({
-  name: "string",
-  age: "number",
-});
-
-user.name = "Ivan"; // выполнится
-user.age = 20;      // выполнится
-user.age = "20";    // должно выбросить ошибку
