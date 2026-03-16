@@ -19,7 +19,7 @@ function memoize(fn) {
             return cache.get(key);
         }
         // иначе просто считаем функцию и запоминаем ее результат
-        const result = fn(...args);
+        const result = fn.apply(this, args);
         console.log('cache set:', key, result);
         cache.set(key, result);
         return result;
