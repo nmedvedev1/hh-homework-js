@@ -7,7 +7,25 @@
 */
 
 function typedObject(schema) {
-  // TODO: реализуйте
+  const targer = {}
+
+  return new Proxy(targer, {
+    set( obj, prop, value ) {
+      if (!(prop in schema)) {
+        throw new Error(`Свойство "${String(prop)}" не описано в схеме`)
+      }
+
+      const expectedType = schema[prop]
+      const actualType = typeof value
+
+      if (expectedType !== actualType) {
+        throw new Error(`Неверный тип для свойста "${String(prop)}". Ожидался - ${expectedType}, пришел - ${actualType}`)
+      }
+
+      obj[prop] = value
+      return true
+    }
+  })
 }
 
 const user = typedObject({

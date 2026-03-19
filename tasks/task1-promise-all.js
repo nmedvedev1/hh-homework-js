@@ -8,7 +8,31 @@
 */
 
 function promiseAll(promises) {
-  // TODO: реализуйте
+  return new Promise(( resolve, reject ) => {
+    if (!Array.isArray(promises)) {
+      reject(new TypeError("Аргумент должен быть массивом"))
+      return
+    }
+
+    if (promises.length === 0) {
+      reject([])
+      return
+    }
+
+    const results = new Array(promises.length)
+    let completedCount = 0
+
+    promises.forEach(( promise, index ) => {
+      Promise.resolve(promise)
+        .then(( value ) => {
+          results[index] = value
+          completedCount++
+
+          if (completedCount === promise.length) return resolve(results)
+        })
+        .catch(reject)
+    })
+  })
 }
 
 const p1 = Promise.resolve(1);
