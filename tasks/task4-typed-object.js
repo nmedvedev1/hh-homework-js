@@ -7,7 +7,17 @@
 */
 
 function typedObject(schema) {
-  // TODO: реализуйте
+  return new Proxy({}, {
+    set(target, prop, val, receiver) {
+         if (!schema[prop]) {
+        throw new Error("Свойство отсутствует в схеме");
+      }
+      if (typeof val !== schema[prop]) {
+        throw new TypeError ("Неверный тип данных")
+      }
+      return Reflect.set(target, prop, val, receiver);
+    }   
+  })
 }
 
 const user = typedObject({
