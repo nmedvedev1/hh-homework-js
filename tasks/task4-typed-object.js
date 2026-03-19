@@ -8,16 +8,14 @@
 
 function typedObject(schema) {
 
-  let obj = {}
-
-  return new Proxy(obj, {
+  return new Proxy({}, {
     set(target, prop, val){
 
-      if(!schema.hasOwnProperty(prop)) throw new Error("No such property in object")
+      if(!Object.hasOwn(schema, prop)) throw new Error("No such property in object")
 
       if(typeof val === schema[prop]){
-        target[prop] = val
-        return true
+        
+        return Reflect.set(target, prop, val)
       } else {
         throw new Error("wrong type")
       }
