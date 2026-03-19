@@ -7,8 +7,32 @@
 */
 
 function typedObject(schema) {
-  // TODO: реализуйте
+  const obj = {};
+
+  for (const key in schema) {
+    const expectedType = schema[key];
+    let value;
+
+    Object.defineProperty(obj, key, {
+      get() {
+        return value;
+      },
+      set(newValue) {
+        const actualType = typeof newValue;
+
+        if (actualType !== expectedType) {
+          throw new TypeError(
+            `Error`
+          );
+        }
+        value = newValue;
+      },
+      enumerable: true,
+    });
+  }
+  return obj;
 }
+
 
 const user = typedObject({
   name: "string",
