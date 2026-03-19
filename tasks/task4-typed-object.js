@@ -6,8 +6,23 @@
 - При присваивании проверять тип и бросать ошибку при несоответствии
 */
 
+
 function typedObject(schema) {
-  // TODO: реализуйте
+  return new Proxy({}, {
+    set(target, prop, value) {
+      if (prop in schema) {
+        const expectedType = schema[prop];
+        const actualType = typeof value;
+        if (actualType !== expectedType) {
+          throw new TypeError(
+            `Неверный тип для поля "${String(prop)}": ожидался ${expectedType}, а получен ${actualType}`
+          );
+        }
+      }
+      target[prop] = value;
+      return true;
+    }
+  });
 }
 
 const user = typedObject({
@@ -15,6 +30,6 @@ const user = typedObject({
   age: "number",
 });
 
-user.name = "Ivan"; // выполнится
-user.age = 20;      // выполнится
-user.age = "20";    // должно выбросить ошибку
+user.name = "Ivan";
+user.age = 20; 
+console.log(user); 
