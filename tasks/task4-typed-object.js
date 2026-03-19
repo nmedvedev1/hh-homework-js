@@ -7,7 +7,31 @@
 */
 
 function typedObject(schema) {
-  // TODO: реализуйте
+  const obj = {};
+
+  return new Proxy(obj, {
+    set(target, prop, value) {
+      if (!(prop in schema)) {
+        throw new Error('ошибка');
+      }
+
+      const expectedType = schema[prop];
+      const actualType = typeof value;
+
+      if (actualType !== expectedType) {
+        throw new TypeError(
+          "Ошибка"
+        );
+      }
+
+      target[prop] = value;
+      return true;
+    },
+
+    get(target, prop) {
+      return target[prop];
+    },
+  });
 }
 
 const user = typedObject({
@@ -15,6 +39,6 @@ const user = typedObject({
   age: "number",
 });
 
-user.name = "Ivan"; // выполнится
-user.age = 20;      // выполнится
-user.age = "20";    // должно выбросить ошибку
+console.log(user.name = "Ivan"); // выполнится
+console.log(user.age = 20);      // выполнится
+console.log(user.age = "20");    // должно выбросить ошибку

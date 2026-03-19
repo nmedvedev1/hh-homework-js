@@ -7,7 +7,19 @@
 */
 
 function memoize(fn) {
-  // TODO: реализуйте
+   const cache = new Map();
+
+  return function(...args) {
+    const key = JSON.stringify(args);
+
+    if (cache.has(key)) {
+      return cache.get(key);
+    }
+
+    const result = fn(...args);
+    cache.set(key, result);
+    return result;
+  };
 }
 
 const slowAdd = (a, b) => {
@@ -15,5 +27,5 @@ const slowAdd = (a, b) => {
 };
 
 const memoAdd = memoize(slowAdd);
-memoAdd(1, 2); // возвращает 3
-memoAdd(1, 2); // из кэша, возвращает 3
+console.log(memoAdd(1, 2)); // возвращает 3
+console.log(memoAdd(1, 2)); // из кэша, возвращает 3
